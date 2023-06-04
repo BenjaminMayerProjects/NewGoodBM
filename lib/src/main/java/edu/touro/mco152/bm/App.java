@@ -4,6 +4,7 @@ import edu.touro.mco152.bm.persist.DiskRun;
 import edu.touro.mco152.bm.ui.Gui;
 import edu.touro.mco152.bm.ui.MainFrame;
 import edu.touro.mco152.bm.ui.SelectFrame;
+import org.checkerframework.checker.guieffect.qual.UI;
 
 import javax.swing.SwingWorker.StateValue;
 import javax.swing.*;
@@ -243,7 +244,7 @@ public class App {
             msg("worker is null abort...");
             return;
         }
-        worker.cancel(true);
+        worker.UI.cancelUI(true);
     }
 
     /**
@@ -270,7 +271,10 @@ public class App {
 
         //4. set up disk worker thread and its event handlers
         worker = new DiskWorker();
-        worker.addPropertyChangeListener((final PropertyChangeEvent event) -> {
+        BenchmarkUI ui = new SwingWorkerUI();
+        ui.setCallable(worker);
+        worker.setUI(ui);
+        worker.UI.addPropertyChangeListenerUI((final PropertyChangeEvent event) -> {
             switch (event.getPropertyName()) {
                 case "progress":
                     int value = (Integer) event.getNewValue();
@@ -291,7 +295,7 @@ public class App {
         });
 
         //5. start the Swing worker thread
-        worker.execute();
+        worker.UI.executeUI();
     }
 
     /**
