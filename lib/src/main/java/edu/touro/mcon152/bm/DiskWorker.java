@@ -4,6 +4,7 @@ import edu.touro.mcon152.bm.Commands.BenchmarkCommand;
 import edu.touro.mcon152.bm.Commands.BenchmarkInvoker;
 import edu.touro.mcon152.bm.Commands.ReadCommand;
 import edu.touro.mcon152.bm.Commands.WriteCommand;
+import edu.touro.mcon152.bm.observers.RulesObserver;
 import edu.touro.mcon152.bm.persist.PersistenceObserver;
 import edu.touro.mcon152.bm.ui.Gui;
 
@@ -79,6 +80,7 @@ public class DiskWorker implements Callable {
          */
         readCommand.addObserver(new Gui());
         readCommand.addObserver(new PersistenceObserver());
+        readCommand.addObserver(new RulesObserver());
         writeCommand.addObserver(new Gui());
         writeCommand.addObserver(new PersistenceObserver());
         /*
