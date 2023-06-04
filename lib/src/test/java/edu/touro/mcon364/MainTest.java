@@ -70,7 +70,7 @@ public class MainTest implements BenchmarkUI{
             App.worker = new DiskWorker();
             BenchmarkUI test = new MainTest();
             test.setCallable(App.worker);
-            App.worker.setUI(test);
+            App.worker.setUserInterface(test);
         }
     }
 
@@ -118,7 +118,7 @@ public class MainTest implements BenchmarkUI{
             App.worker = new DiskWorker();
             BenchmarkUI test = new MainTest();
             test.setCallable(App.worker);
-            App.worker.setUI(test);
+            App.worker.setUserInterface(test);
             App.worker.call();
             assertEquals(100, currentPercentComplete);
         } catch (Exception e) {
