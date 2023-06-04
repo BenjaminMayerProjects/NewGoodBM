@@ -33,6 +33,7 @@ dependencies {
 // DBMS
     implementation group: 'org.apache.derby', name: 'derby', version: '10.15.2.0'
     implementation group: 'org.apache.derby', name: 'derbyshared', version: '10.15.2.0'
+    testImplementation 'junit:junit:4.13.1'
 }
 sourceSets  {
     // this may be needed to make entity classes visible to the persistence scanner
