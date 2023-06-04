@@ -147,9 +147,7 @@ public final class Gui implements BenchmarkObserver {
 
     @Override
     public void update(DiskRun run) {
-        EntityManager em = EM.getEntityManager();
-        em.getTransaction().begin();
-        em.persist(run);
-        em.getTransaction().commit();
+        Gui.runPanel.addRun(run);
+
     }
 }
