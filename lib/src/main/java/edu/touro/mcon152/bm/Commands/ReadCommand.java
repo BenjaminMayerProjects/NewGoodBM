@@ -14,6 +14,10 @@ import java.util.Date;
 import static edu.touro.mcon152.bm.App.*;
 import static edu.touro.mcon152.bm.DiskMark.MarkType.READ;
 
+/**
+ * This is the read implementation of our Benchmark Command Interface. It servers to make benchmark reads, mostly independent
+ * of the DiskWorker class, as the various data needed is provided directly via the constructor.
+ */
 public class ReadCommand implements BenchmarkCommand
         {
     private int wUnitsComplete = 0,

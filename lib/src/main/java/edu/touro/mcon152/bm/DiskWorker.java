@@ -13,23 +13,7 @@ import java.util.logging.Logger;
 
 import static edu.touro.mcon152.bm.App.*;
 
-/**
- * Run the disk benchmarking exclusively as a Swing-compliant thread (only one of these threads can run at
- * once.) Must cooperate with Swing to provide and make use of interim and final progress and
- * information, which is also recorded as needed to the persistence store, and log.
- * <p>
- * Depends on static values that describe the benchmark to be done having been set in App and Gui classes.
- * The DiskRun class is used to keep track of and persist info about each benchmark at a higher level (a run),
- * while the DiskMark class described each iteration's result, which is displayed by the UI as the benchmark run
- * progresses.
- * <p>
- * This class only knows how to do 'read' or 'write' disk benchmarks, all of which is done in doInBackground(). It is instantiated by the
- * startBenchmark() method.
- * <p>
- * To be Swing compliant this class extends SwingWorker and is dependant on it. It declares that its final return (when
- * doInBackground() is finished) is of type Boolean, and declares that intermediate results are communicated to
- * Swing using an instance of the DiskMark class.
- */
+
 
 /**
  * Run the disk benchmarking as a Swing-compliant thread (only one of these threads can run at
@@ -48,6 +32,11 @@ import static edu.touro.mcon152.bm.App.*;
  * (As suggested on our course's Slack) This means that our DoInBackground method, which prior required
  * direct dependency on Swing, can be replaced by passing the DW class to whichever interface we please
  * and having said interface call our Call method to execute DiskWorker's logic.
+ *
+ *
+ * NEW- This class now features an implementation of the Command interface. the Class does this by
+ * declaring the necessary read/write commands and having the BenchmarkInvoker load and execute them
+ * when it is necessary to make the relevant benchmark.
  */
 
 public class DiskWorker implements Callable {

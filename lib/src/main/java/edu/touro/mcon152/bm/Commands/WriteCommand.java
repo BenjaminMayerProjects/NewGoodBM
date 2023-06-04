@@ -16,6 +16,10 @@ import java.util.logging.Logger;
 import static edu.touro.mcon152.bm.App.*;
 import static edu.touro.mcon152.bm.DiskMark.MarkType.WRITE;
 
+/**
+        * This is the write implementation of our Benchmark Command Interface. It serves to make benchmark writes, mostly independent
+        * of the DiskWorker class, as the various data needed is provided directly via the constructor.
+**/
 public class WriteCommand implements BenchmarkCommand{
     private int wUnitsComplete = 0,
             rUnitsComplete = 0,
