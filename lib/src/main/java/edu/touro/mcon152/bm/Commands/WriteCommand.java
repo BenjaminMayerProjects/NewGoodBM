@@ -1,6 +1,8 @@
 package edu.touro.mcon152.bm.Commands;
 
 import edu.touro.mcon152.bm.*;
+import edu.touro.mcon152.bm.observers.BenchmarkObserver;
+import edu.touro.mcon152.bm.observers.BenchmarkSubject;
 import edu.touro.mcon152.bm.persist.DiskRun;
 import edu.touro.mcon152.bm.persist.EM;
 import edu.touro.mcon152.bm.ui.Gui;
@@ -9,6 +11,7 @@ import jakarta.persistence.EntityManager;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +23,7 @@ import static edu.touro.mcon152.bm.DiskMark.MarkType.WRITE;
         * This is the write implementation of our Benchmark Command Interface. It serves to make benchmark writes, mostly independent
         * of the DiskWorker class, as the various data needed is provided directly via the constructor.
 **/
-public class WriteCommand implements BenchmarkCommand{
+public class WriteCommand implements BenchmarkCommand, BenchmarkSubject {
     private int wUnitsComplete = 0,
             rUnitsComplete = 0,
             unitsComplete;
@@ -39,6 +42,7 @@ public class WriteCommand implements BenchmarkCommand{
     private BenchmarkUI userInterface;
     private int numOfBlocks;
     private int sizeOfBlocks;
+    private ArrayList<BenchmarkObserver> observers;
     private DiskRun.BlockSequence sequence;
     private int numOfMarks;
 
@@ -52,6 +56,7 @@ public class WriteCommand implements BenchmarkCommand{
         wUnitsTotal = App.writeTest ? numOfBlocks * numOfMarks : 0;
         rUnitsTotal = App.readTest ? numOfBlocks * numOfMarks : 0;
         unitsTotal = wUnitsTotal + rUnitsTotal;
+        observers = new ArrayList<>();
     }
 
 
@@ -155,14 +160,40 @@ public class WriteCommand implements BenchmarkCommand{
             run.setRunAvg(wMark.getCumAvg());
             run.setEndTime(new Date());
         }
-        EntityManager em = EM.getEntityManager();
-        em.getTransaction().begin();
-        em.persist(run);
-        em.getTransaction().commit();
 
-        Gui.runPanel.addRun(run);
+        /**
+         Inform all observers of the conclusion of a benchmark, so they can
+         update a GUI, utilize Persistance, or send Slack messages.
+         **/
+
+
+        notifyObservers(run);
+
+
+
+
         return true;
     }
 
+    @Override
+    public void notifyObservers(DiskRun run)
+    {
+        for (BenchmarkObserver observer: observers) {
+            observer.update(run);
+
+        }
+    }
+
+    @Override
+    public void addObserver(BenchmarkObserver observer) {
+        observers.add(observer);
+
+    }
+
+    @Override
+    public void removeObserver(BenchmarkObserver observer)
+    {
+        observers.remove(observer);
+    }
 }
 

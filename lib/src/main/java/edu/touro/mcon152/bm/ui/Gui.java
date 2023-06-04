@@ -2,6 +2,10 @@ package edu.touro.mcon152.bm.ui;
 
 import edu.touro.mcon152.bm.App;
 import edu.touro.mcon152.bm.DiskMark;
+import edu.touro.mcon152.bm.observers.BenchmarkObserver;
+import edu.touro.mcon152.bm.persist.DiskRun;
+import edu.touro.mcon152.bm.persist.EM;
+import jakarta.persistence.EntityManager;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -20,7 +24,7 @@ import java.text.NumberFormat;
  * Creates and populates a graph with data from the current run, and
  * stores gui references for easy access.
  */
-public final class Gui {
+public final class Gui implements BenchmarkObserver {
 
     public static ChartPanel chartPanel = null;
     public static MainFrame mainFrame = null;
@@ -139,5 +143,11 @@ public final class Gui {
         chart.getXYPlot().getRenderer().setSeriesVisibleInLegend(5, App.readTest);
         chart.getXYPlot().getRenderer().setSeriesVisibleInLegend(6, App.readTest && App.showMaxMin);
         chart.getXYPlot().getRenderer().setSeriesVisibleInLegend(7, App.readTest && App.showMaxMin);
+    }
+
+    @Override
+    public void update(DiskRun run) {
+        Gui.runPanel.addRun(run);
+
     }
 }

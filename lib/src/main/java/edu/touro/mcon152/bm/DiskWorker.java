@@ -4,6 +4,8 @@ import edu.touro.mcon152.bm.Commands.BenchmarkCommand;
 import edu.touro.mcon152.bm.Commands.BenchmarkInvoker;
 import edu.touro.mcon152.bm.Commands.ReadCommand;
 import edu.touro.mcon152.bm.Commands.WriteCommand;
+import edu.touro.mcon152.bm.observers.RulesObserver;
+import edu.touro.mcon152.bm.persist.PersistenceObserver;
 import edu.touro.mcon152.bm.ui.Gui;
 
 import javax.swing.*;
@@ -47,10 +49,8 @@ public class DiskWorker implements Callable {
         this.userInterface = userInterface;
     }
 
-    // Record any success or failure status returned from SwingWorker (might be us or super)
-    Boolean lastStatus = null;  // so far unknown
-    //callable copy/paste
-    //
+
+    Boolean lastStatus = null;
     @Override
     public Object call() throws Exception {
 
@@ -73,6 +73,16 @@ public class DiskWorker implements Callable {
         BenchmarkInvoker invoker = new BenchmarkInvoker();
         ReadCommand readCommand = new ReadCommand(userInterface, numOfBlocks, blockSizeKb, blockSequence, numOfMarks);
         WriteCommand writeCommand = new WriteCommand(userInterface, numOfBlocks, blockSizeKb, blockSequence, numOfMarks);
+
+        /**
+         * And as part of our new observer pattern, we will register whatever needs to be in order ot notify other
+         * relevant system components of the completion of a benchmark.
+         */
+        readCommand.addObserver(new Gui());
+        readCommand.addObserver(new PersistenceObserver());
+        readCommand.addObserver(new RulesObserver());
+        writeCommand.addObserver(new Gui());
+        writeCommand.addObserver(new PersistenceObserver());
         /*
         /*
           init local vars that keep track of benchmarks, and a large read/write buffer
