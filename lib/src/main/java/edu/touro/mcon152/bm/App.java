@@ -243,7 +243,7 @@ public class App {
             msg("worker is null abort...");
             return;
         }
-        worker.UI.cancelUI(true);
+        worker.userInterface.cancelUI(true);
     }
 
     /**
@@ -272,8 +272,8 @@ public class App {
         worker = new DiskWorker();
         BenchmarkUI ui = new SwingWorkerUI();
         ui.setCallable(worker);
-        worker.setUI(ui);
-        worker.UI.addPropertyChangeListenerUI((final PropertyChangeEvent event) -> {
+        worker.setUserInterface(ui);
+        worker.userInterface.addPropertyChangeListenerUI((final PropertyChangeEvent event) -> {
             switch (event.getPropertyName()) {
                 case "progress":
                     int value = (Integer) event.getNewValue();
@@ -294,7 +294,7 @@ public class App {
         });
 
         //5. start the Swing worker thread
-        worker.UI.executeUI();
+        worker.userInterface.executeUI();
     }
 
     /**
