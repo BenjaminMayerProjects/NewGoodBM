@@ -1,14 +1,18 @@
 package edu.touro.mcon152.bm.Commands;
 
 import edu.touro.mcon152.bm.*;
+import edu.touro.mcon152.bm.observers.BenchmarkObserver;
+import edu.touro.mcon152.bm.observers.BenchmarkSubject;
 import edu.touro.mcon152.bm.persist.DiskRun;
 import edu.touro.mcon152.bm.persist.EM;
+import edu.touro.mcon152.bm.persist.PersistenceObserver;
 import edu.touro.mcon152.bm.ui.Gui;
 import jakarta.persistence.EntityManager;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.Date;
 
 import static edu.touro.mcon152.bm.App.*;
@@ -18,7 +22,7 @@ import static edu.touro.mcon152.bm.DiskMark.MarkType.READ;
  * This is the read implementation of our Benchmark Command Interface. It servers to make benchmark reads, mostly independent
  * of the DiskWorker class, as the various data needed is provided directly via the constructor.
  */
-public class ReadCommand implements BenchmarkCommand
+public class ReadCommand implements BenchmarkCommand, BenchmarkSubject
         {
     private int wUnitsComplete = 0,
             rUnitsComplete = 0,
@@ -34,6 +38,7 @@ public class ReadCommand implements BenchmarkCommand
     private byte[] blockArr = new byte[blockSize];
 
     private DiskMark rMark;
+    private ArrayList<BenchmarkObserver> observers;
     private int startFileNum = App.nextMarkNumber;
     private BenchmarkUI userInterface;
     private int numOfBlocks;
@@ -51,6 +56,8 @@ public class ReadCommand implements BenchmarkCommand
         wUnitsTotal = App.writeTest ? numOfBlocks * numOfMarks : 0;
         rUnitsTotal = App.readTest ? numOfBlocks * numOfMarks : 0;
         unitsTotal = wUnitsTotal + rUnitsTotal;
+        observers = new ArrayList<>();
+
     }
     public boolean execute()
     {
@@ -113,15 +120,38 @@ public class ReadCommand implements BenchmarkCommand
             run.setEndTime(new Date());
         }
 
-    /*
-      Persist info about the Read BM Run (e.g. into Derby Database) and add it to a GUI panel
-     */
-        EntityManager em = EM.getEntityManager();
-        em.getTransaction().begin();
-        em.persist(run);
-        em.getTransaction().commit();
+    /**
+      Inform all observers of the conclusion of a benchmark, so they can
+      update a GUI, utilize Persistance, or send Slack messages.
+     **/
 
-        Gui.runPanel.addRun(run);
+
+        notifyObservers(run);
+
+
+
+
         return true;
     }
-}
+
+    @Override
+    public void notifyObservers(DiskRun run)
+    {
+        for (BenchmarkObserver observer: observers) {
+            observer.update(run);
+
+        }
+    }
+
+    @Override
+    public void addObserver(BenchmarkObserver observer) {
+        observers.add(observer);
+
+    }
+
+    @Override
+    public void removeObserver(BenchmarkObserver observer)
+    {
+        observers.remove(observer);
+    }
+        }

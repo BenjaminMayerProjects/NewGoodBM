@@ -112,6 +112,7 @@ public class App {
         Gui.mainFrame.setLocationRelativeTo(null);
         Gui.progressBar = Gui.mainFrame.getProgressBar();
 
+
         // configure the embedded DB in .jDiskMark
         System.setProperty("derby.system.home", APP_CACHE_DIR);
         loadSavedRuns();
@@ -125,6 +126,7 @@ public class App {
                 App.saveConfig();
             }
         });
+
     }
 
     /**
